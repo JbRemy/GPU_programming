@@ -98,7 +98,6 @@ void read_file(const char * fname, float *array, int pos){
     int count;
 
     file = fopen (fname, "r");
-
     while ((c = fgetc(file)) != EOF) {
         if (c == ';' || c == '\n') {
             array[pos + count] = atof(tampon);
@@ -110,20 +109,21 @@ void read_file(const char * fname, float *array, int pos){
         }
     }
 
+    printf("TEST\n");
     fclose (file);
 }
 
 void get_data(float *J, float *A){
 
-    char* fname;
+    char fname[100] = {0};
 
     for (int n = 0 ; n<N ; n++){
         for (int p = 0 ; p<P ; p++){
-            sprintf (fname, "files/%i/J_%i.txt", n, p);
+            snprintf (fname, 100, "files/%i/J_%i.txt", n, p);
             read_file (fname, J, P*n*4 + 4*p);
         }
 
-        sprintf (fname, "files/%i/A.txt", n);
+        snprintf (fname, 100, "files/%i/A.txt", n);
         read_file (fname, A, n*d*d);
     }
 }
@@ -133,10 +133,10 @@ void write_result(float* out){
 
     FILE *file;
     const char* str = "; ";
-    char* fname;
+    char fname[100] = {0};
 
     for (int n=0 ; n<N ; n++) {
-        sprintf (fname, "files/%i/out.txt", n);
+        snprintf (fname, 100, "files/%i/out.txt", n);
         file = fopen(fname, "w");
 
         for (int i=0 ; i<d ; i++) {
@@ -177,7 +177,6 @@ int main(){
     for(int i=0 ; i<count ; i++) {
         cudaGetDeviceProperties(&prop, i) ;
         printf("Taille totale de la mémoire globale %ld\n", prop.totalGlobalMem) ;
-        printf("TEST");
     }
 
     // Define J A and out
@@ -187,7 +186,6 @@ int main(){
     float A [d*d*N];
     float out [d*d*N];
 
-    printf("pass");
     get_data(J, A);
 
     // device copies
